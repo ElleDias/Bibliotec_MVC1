@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using Bibliotec.Contexts;
 using Bibliotec.Models;
@@ -19,14 +20,66 @@ namespace Bibliotec_mvc.Controllers
         {
             _logger = logger;
         }
- [Route("Cadastro")]
+
+
+        //metodo que retorna a tela de cadastro:
+        [Route("Cadastro")]
         public IActionResult Cadastro()
         {
-             ViewBag.Admin = HttpContext.Session.GetString("Admin")!;
-             ViewBag.Categorias = context.Categoria.ToList();
+            ViewBag.Admin = HttpContext.Session.GetString("Admin")!;
+            ViewBag.Categorias = context.Categoria.ToList();
             return View();
         }
+
+        // metodo para cadastrar um livro:
+        [Route("Cadastrar")]
+        public IActionResult Cadastrar(IFormCollection form)
+        {
+            Livro novolivro = new Livro();
+
+
+            novolivro.Nome = form["Nome"].ToString();
+            novolivro.Descricao = form["Descricao"].ToString();
+            novolivro.Editora = form["Editora"].ToString();
+            novolivro.Escritor = form["Escritor"].ToString();
+            novolivro.Idioma = form["Idioma"].ToString();
+
+            //trabalhar com imagens:
+            if (form.Files.Count > 0)
+            {
+
+var arquio = form.Files[0];
+
+var pasta = Path.Combine(Directory.GetCurrentDirectory(),"wwroot/imagens/Livros");
+
+if (Directory.Exists(pasta)){
+    //criar a pasta: 
+}
+            }
+
+
+            context.Livro.Add(novolivro);
+            context.SaveChanges();
+
+            //segunda parte é adicionar dentro de livrocategoria a cateforia que ´pertence ao nobo livro
+
+            List<LivroCategoria> listalivrocategorias = new List<LivroCategoria>(); //lista as categorias
+            string[] categoriasSelecionadas = form["Categoria"].ToString().Split(",");
+
+            foreach (string categoria in categoriasSelecionadas)
+            {
+                LivroCategoria livroCategoria = new LivroCategoria();
+                livroCategoria.CategoriaID = int.Parse(categoria);
+                livroCategoria.LivroID = novolivro.LivroID;
+
+            }
+            context.LivroCategoria.AddRange(listalivrocategorias);
+            context.SaveChanges();
+            return LocalRedirect("/Cadastro");
+        }
+
         Context context = new Context();
+        private object form;
 
         public IActionResult Index()
         {
@@ -35,6 +88,9 @@ namespace Bibliotec_mvc.Controllers
 
             //criar uma lista de livros
             List<Livro> ListaLivros = context.Livro.ToList();
+
+
+
 
 
             var LivroReservados = context.LivroReserva.ToDictionary(Livro => Livro.LivroID, livror => livror.DtReserva);
