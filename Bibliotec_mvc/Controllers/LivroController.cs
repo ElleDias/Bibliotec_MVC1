@@ -19,7 +19,13 @@ namespace Bibliotec_mvc.Controllers
         {
             _logger = logger;
         }
-
+ [Route("Cadastro")]
+        public IActionResult Cadastro()
+        {
+             ViewBag.Admin = HttpContext.Session.GetString("Admin")!;
+             ViewBag.Categorias = context.Categoria.ToList();
+            return View();
+        }
         Context context = new Context();
 
         public IActionResult Index()

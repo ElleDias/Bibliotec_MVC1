@@ -26,9 +26,10 @@ namespace Bibliotec.Controllers
         {
             return View();
         }
-
+       
         [Route("Logar")]
-        public IActionResult Logar(IFormCollection form){
+        public IActionResult Logar(IFormCollection form)
+        {
             // Criar duas variaveis para armazenar as informacoes do formulario
             string emailInformado = form["Email"].ToString();
             string senhaInformado = form["Senha"].ToString();
@@ -49,10 +50,13 @@ namespace Bibliotec.Controllers
             // }
 
             //Se meu usuario buscado for igual a nulo
-            if(usuarioBuscado == null){
+            if (usuarioBuscado == null)
+            {
                 Console.WriteLine($"Dados inválidos!");
                 return LocalRedirect("~/Login");
-            }else{
+            }
+            else
+            {
                 Console.WriteLine($"Eba você entrou!");
                 HttpContext.Session.SetString("UsuarioID", usuarioBuscado.UsuarioID.ToString());
                 HttpContext.Session.SetString("Admin", usuarioBuscado.Admin.ToString());
