@@ -90,7 +90,7 @@ namespace Bibliotec_mvc.Controllers
             }
             context.LivroCategoria.AddRange(listalivrocategorias);
             context.SaveChanges();
-            return LocalRedirect("/Cadastro");
+            return LocalRedirect("/Livro/Cadastro");
         }
 
         Context context = new Context();
