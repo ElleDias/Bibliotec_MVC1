@@ -48,16 +48,31 @@ namespace Bibliotec_mvc.Controllers
             if (form.Files.Count > 0)
             {
 
-var arquio = form.Files[0];
+                var arquivo = form.Files[0];
 
-var pasta = Path.Combine(Directory.GetCurrentDirectory(),"wwroot/imagens/Livros");
+                var pasta = Path.Combine(Directory.GetCurrentDirectory(), "wwroot/imagens/Livros");
 
-if (Directory.Exists(pasta)){
-    //criar a pasta: 
-}
+                if (Directory.Exists(pasta))
+                {
+                    //criar a pasta: 
+                    Directory.CreateDirectory(pasta);
+                }
+
+                //Terceiro passo
+                //criar a variavel para armazenar o caminho em quer meu aruivo estara , alem do nome dele.
+
+                var caminho = Path.Combine(pasta, arquivo.FileName);
+                using (var stream = new FileStream(caminho, FileMode.Create))
+                {
+                    //copiou o arquivo para o meu diretorio
+                    arquivo.CopyTo(stream);
+                }
+                novolivro.Imagem = arquivo.FileName;
             }
-
-
+            else
+            {
+                novolivro.Imagem = "padrao.png";
+            }
             context.Livro.Add(novolivro);
             context.SaveChanges();
 
